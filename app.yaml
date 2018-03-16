@@ -1,0 +1,5 @@
+# [START runtime]
+runtime: ruby
+env: flex
+entrypoint: bundle exec rackup -p $PORT
+# [END runtime]
