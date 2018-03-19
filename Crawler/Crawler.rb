@@ -7,9 +7,9 @@ require 'uri'
     @param url is the url to be crawled
 =end
 
-def startCrawling(base_URL,links_to_be_ignored = [])
+def startCrawling(toBeCrawled)
     
-    Spidr.site(base_URL, ignore_links: links_to_be_ignored) do |spider|
+    Spidr.site(toBeCrawled.url, ignore_links: toBeCrawled.ignored_urls) do |spider|
         o = 0
         spider.every_url do |url|
             page = Nokogiri::HTML(open(url))

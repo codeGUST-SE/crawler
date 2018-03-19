@@ -1,7 +1,12 @@
-# Require the crawler from the directory
-require_relative 'Crawler/crawler'
-require_relative 'URL'
-# Starts the crawling proccess
-urls = Url.new()
+# Require the dependencies from the directory
+require_relative 'Crawler/Crawler'
+require_relative 'Models/Models'
 
-startCrawling(base_URL = urls.return_link_sof, links_to_be_ignored = urls.return_ignored_sof)
+=begin
+    Creates the Objects of the sites that are to be crawled
+=end
+stackoverflow = Stackoverflow.new(url = 'https://stackoverflow.com/questions')
+github = Github.new(url = 'https://github.com/')
+
+# Starts the crawling proccess
+startCrawling(toBeCrawled = stackoverflow)
