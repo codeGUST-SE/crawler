@@ -1,22 +1,15 @@
-# codeGUST
-
-Undergraduate senior project
+# codeGUST crawler
 
 ## Description
 
-codeGUST is a search engine, optimized for the following use cases:
+codeGUST crawler uses spidr to crawl the following websites:
 
-- Searching source codes
-- Searching frameworks, libraries, APIs, templates
-- Searching programming tutorials
-- Searching forums, discussions, commments
-- Other similar use cases
+- Stack Overflow
+- GitHub
 
-## Components
+## Getting started
 
-The components of this search engine will be: 
-
-1. Web crawler
-2. Indexing
-3. Ranking
-4. Query serving
+Install the dependencies:
+```
+$ bundle install
+```
