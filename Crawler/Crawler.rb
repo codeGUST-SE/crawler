@@ -11,37 +11,36 @@ require 'uri'
 
 def startCrawling(toBeCrawled)
     
-    Spidr.site(toBeCrawled.url, ignore_links: toBeCrawled.ignored_urls) do |spider|
-        o = 0
-        spider.every_url do |url|
-            linkObject = Crawlable.new(url=url)
-            page = Nokogiri::HTML(open(url))
+  Spidr.site(toBeCrawled.url, ignore_links: toBeCrawled.ignored_urls) do |spider|
+    o = 0
+    spider.every_url do |url|
+        linkObject = Crawlable.new(url=url)
+        page = Nokogiri::HTML(open(url))
 
-            # searchs for the main components needed in crawlable object passed
-            toBeCrawled.main_divs.each do |search_for|
-                x = page.search(search_for)
-                if x.count != 0
-                    linkObject.main_divs << page.search(search_for)
-                end
-            end
+        # searchs for the main components needed in crawlable object passed
+        toBeCrawled.main_divs.each do |search_for|
+            parsed_page = page.search(search_for)
+            linkObject.main_divs << parsed_page if parsed_page.count != 0            
+        end
             
-            # searchs for the scoring components needed in crawlable object passed
-            if linkObject.main_divs.count != 0 
-                toBeCrawled.score_divs.each do |search_for|
-                    linkObject.score_divs << page.search(search_for)
-                end
-            end
+        # searchs for the scoring components needed in crawlable object passed
+        toBeCrawled.score_divs.each do |search_for|
+            linkObject.score_divs << page.search(search_for)
+        end if linkObject.main_divs.count != 0 
+
             ######################################################################
             # should be removed! this is just for testing on personal computers
             # test the output 
-            puts ">>#{linkObject.url}"
-            puts linkObject.score_divs
-            if o == 10
-                return
-            end
-            o += 1
-            ######################################################################
-          end
+        puts ">>#{linkObject.url}"
+        puts linkObject.main_divs
+        puts ">>>>>"
+        puts linkObject.score_divs
+        if o == 20
+            return
+        end
+        o += 1
+        ######################################################################
+        end
     end
 end
 

@@ -9,4 +9,4 @@ stackoverflow = Stackoverflow.new(url = 'https://stackoverflow.com/questions')
 github = Github.new(url = 'https://github.com/')
 
 # Starts the crawling proccess
-startCrawling(toBeCrawled = stackoverflow)
+startCrawling(toBeCrawled = github)
