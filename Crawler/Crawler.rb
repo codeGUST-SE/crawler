@@ -19,15 +19,18 @@ def startCrawling(toBeCrawled)
 
             # searchs for the main components needed in crawlable object passed
             toBeCrawled.main_divs.each do |search_for|
-                linkObject.main_divs << page.search(search_for)
+                x = page.search(search_for)
+                if x.count != 0
+                    linkObject.main_divs << page.search(search_for)
+                end
             end
             
             # searchs for the scoring components needed in crawlable object passed
-        
-            toBeCrawled.score_divs.each do |search_for|
-                linkObject.score_divs << page.search(search_for)
+            if linkObject.main_divs.count != 0 
+                toBeCrawled.score_divs.each do |search_for|
+                    linkObject.score_divs << page.search(search_for)
+                end
             end
-            
             ######################################################################
             # should be removed! this is just for testing on personal computers
             # test the output 
