@@ -2,8 +2,9 @@ class CrawlablePages
 
   DIR = 'crawlables/'
 
-  def initialize(filename)
+  def initialize(filename, alt_url)
     @path = DIR + filename
+    @alt_url = alt_url
   end
 
   def get_crawlable
@@ -17,7 +18,12 @@ class CrawlablePages
         file_content += line
       end
     end
+
     hash = eval(file_content)
+    if !@alt_url.nil?
+      hash['url'] = @alt_url
+    end
+
     Crawlable.new(hash['url'], hash['ignored_urls'], hash['main_divs'],
       hash['score_divs'])
   end
