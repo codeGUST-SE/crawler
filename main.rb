@@ -1,5 +1,4 @@
-# Require the crawler from the directory
-require_relative 'Crawler/crawler'
+require_relative 'crawlable_sites'
+require_relative 'crawler'
 
-# Starts the crawling proccess
-startCrawling('http://stackoverflow.com/')
+start_crawling(CrawlableSites::GITHUB)
