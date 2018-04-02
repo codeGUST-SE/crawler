@@ -7,12 +7,13 @@ require 'uri'
 
 =begin
     @param crawlable is the Crawlable object to be crawled
+    @param max_crawls the max number of pages to be crawled
 =end
 class Crawler
-  MAX_CRAWLS = 20   # TODO: Determine the max number of crawls we want
 
-  def initialize(crawlable)
+  def initialize(crawlable, limit)
     @crawlable = crawlable
+    @max_crawls = limit
     @@dataset ||= Google::Cloud::Datastore.new(project_id: "codegust")
   end
 
@@ -45,7 +46,7 @@ class Crawler
         puts crawled_page.url   # DEBUG
 
         # stop crawling after some number of pages
-        if cnt == MAX_CRAWLS
+        if cnt == @max_crawls
           return
         end
 
@@ -64,4 +65,5 @@ class Crawler
     entity.exclude_from_indexes! "page_html", true
     @@dataset.save entity
   end
+  
 end
