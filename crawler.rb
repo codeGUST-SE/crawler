@@ -8,7 +8,7 @@ require 'uri'
     @param crawlable is the Crawlable object to be crawled
 =end
 
-def startCrawling(crawlable)
+def start_crawling(crawlable)
   Spidr.site(crawlable.url, ignore_links: crawlable.ignored_urls) do |spider|
     o = 0
     spider.every_url do |url|
