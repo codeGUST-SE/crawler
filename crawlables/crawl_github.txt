@@ -1,7 +1,7 @@
 # Crawl all GitHub
 {
   'url' => 'https://github.com/',
-  'ignored_urls' => [/features/,/business/,/explore/,/marketplace/,/pricing/,/dashboard/,/login(.*)/,/join(.*)/,/features(.*)/,/personal(.*)/,/about(.*)/,/contact(.*)/,/site(.*)/,/blog(.*)/,/opensearch.xml/,/fluidicon.png/,/manifest.json/],
+  'ignored_urls' => [/features/,/business/,/explore/,/marketplace/,/pricing/,/dashboard/,/login(.*)/,/join(.*)/,/features(.*)/,/personal(.*)/,/about(.*)/,/contact(.*)/,/site(.*)/,/blog(.*)/,/opensearch.xml/,/fluidicon.png/,/manifest.json/,/stories(.*)/,/issues(.*)/,/pulls(.*)/,/commit(.*)/,/search(.*)/,/archive(.*)/,/find(.*)/, /pull(.*)/,/branches(.*)/,/graphs(.)/,/network(.*)/,/blame(.*)/,/releases/,/wiki/,/pulse/,/settings/,/(.)page=(.)/,/release(.*)/,/raw(.)master/,/tree(.)(?!master)(.*)/,/blob(.)(?!master)(.*)/,/topics(.*)/,/watchers(.*)/,/stargazers/],
   'main_divs' => ['div#readme','div.blob-wrapper'],
   'score_divs' => ['a.social-count.js-social-count']
 }
