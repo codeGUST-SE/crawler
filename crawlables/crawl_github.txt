@@ -1,0 +1,7 @@
+# Crawl all Stack Overflow
+{
+  'url' => 'https://github.com/',
+  'ignored_urls' => [/features/,/business/,/explore/,/marketplace/,/pricing/,/dashboard/,/login(.*)/,/join(.*)/,/features(.*)/,/personal(.*)/,/about(.*)/,/contact(.*)/,/site(.*)/,/blog(.*)/,/opensearch.xml/,/fluidicon.png/,/manifest.json/],
+  'main_divs' => ['div#readme','div.blob-wrapper'],
+  'score_divs' => ['a.social-count.js-social-count']
+}

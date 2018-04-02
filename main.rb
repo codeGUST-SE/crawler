@@ -8,4 +8,4 @@ end
 filename = ARGV[0]
 limit = Integer(ARGV[1])
 
-Crawler.new(CrawlablePages.new(filename).get, limit).start_crawling()
+Crawler.new(CrawlablePages.new(filename).get_crawlable, limit).start_crawling()

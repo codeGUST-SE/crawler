@@ -6,7 +6,7 @@ class CrawlablePages
     @path = DIR + filename
   end
 
-  def get
+  def get_crawlable
     file_content = ''
     File.open(@path, 'r') do |f|
       f.each_line do |line|
@@ -32,5 +32,5 @@ class CrawlablePages
       @score_divs = score_divs
     end
   end
-  
+
 end
