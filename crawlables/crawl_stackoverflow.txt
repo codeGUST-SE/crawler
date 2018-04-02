@@ -1,0 +1,7 @@
+# Crawl all Stack Overflow
+{
+  'url' => 'https://stackoverflow.com/questions',
+  'ignored_urls' => [/questions.ask/,/user(.*)/,/.jobs(.*)/,/tags(.*)/,/help(.*)/,/tour(.*)/,/company(.*)/,/tagged(.*)/,/.tab(.*)/,/election(.*)/,/opensearch.xml/],
+  'main_divs' => ['div#question-header a.question-hyperlink','div.postcell','div.answercell'],
+  'score_divs' => ['div.vote','div.favoritecount']
+}
