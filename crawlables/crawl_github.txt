@@ -1,4 +1,4 @@
-# Crawl all Stack Overflow
+# Crawl all GitHub
 {
   'url' => 'https://github.com/',
   'ignored_urls' => [/features/,/business/,/explore/,/marketplace/,/pricing/,/dashboard/,/login(.*)/,/join(.*)/,/features(.*)/,/personal(.*)/,/about(.*)/,/contact(.*)/,/site(.*)/,/blog(.*)/,/opensearch.xml/,/fluidicon.png/,/manifest.json/],
