@@ -20,35 +20,35 @@ class Crawler
     Spidr.site(@crawlable.url, ignore_links: @crawlable.ignored_urls) do |spider|
       cnt = 0
       spider.every_url do |url|
-        link_object = CrawlableSites::Crawlable.new(url=url)
-        page = Nokogiri::HTML(open(url))
+        crawled_page = CrawlablePages::Crawlable.new(url=url)
+        raw_page = Nokogiri::HTML(open(url))
 
         # searchs for the main components needed in crawlable object passed
         @crawlable.main_divs.each do |search_for|
-          parsed_page = page.search(search_for)
-          link_object.main_divs << parsed_page if parsed_page.count != 0
+          parsed_page = raw_page.search(search_for)
+          crawled_page.main_divs << parsed_page.text if parsed_page.count != 0
         end
 
         # searchs for the scoring components needed in crawlable object passed
         @crawlable.score_divs.each do |search_for|
-          link_object.score_divs << page.search(search_for)
-        end if link_object.main_divs.count != 0
+          crawled_page.score_divs << raw_page.search(search_for)  #TODO .text ?
+        end if crawled_page.main_divs.count != 0
 
         # skip this page if it does not contain the divs we need
-        if link_object.score_divs.empty?
+        if crawled_page.score_divs.empty?
           next
         end
 
         # save to Datastore
-        add_to_datastore(link_object.url.to_s, link_object.main_divs.to_s)
+        add_to_datastore(crawled_page.url.to_s, crawled_page.main_divs.to_s)
 
-        puts link_object.url   # DEBUG
+        puts crawled_page.url   # DEBUG
 
         # stop crawling after some number of pages
         if cnt == MAX_CRAWLS
           return
         end
-        
+
         cnt += 1
       end
     end
@@ -58,7 +58,7 @@ class Crawler
 
   def add_to_datastore(page_url, page_html)
     entity = Google::Cloud::Datastore::Entity.new
-    entity.key = Google::Cloud::Datastore::Key.new "test", page_url
+    entity.key = Google::Cloud::Datastore::Key.new "page", page_url
     entity["page_url"] = page_url
     entity["page_html"] = page_html if page_html
     entity.exclude_from_indexes! "page_html", true
