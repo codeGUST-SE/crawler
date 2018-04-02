@@ -35,7 +35,7 @@ class Crawler
         end if crawled_page.main_divs.count != 0
 
         # skip this page if it does not contain the divs we need
-        if crawled_page.score_divs.empty?
+        if crawled_page.main_divs.empty?
           next
         end
 
