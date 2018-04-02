@@ -1,4 +1,4 @@
-require_relative 'crawlable_sites'
+require_relative 'crawlable_pages'
 require_relative 'crawler'
 
-start_crawling(CrawlableSites::GITHUB)
+Crawler.new(CrawlablePages::GITHUB).start_crawling()

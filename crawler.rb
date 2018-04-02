@@ -1,4 +1,5 @@
 # Spidr is the library used to crawl the internet
+require "google/cloud/datastore"
 require 'spidr'
 require 'nokogiri'
 require 'open-uri'
@@ -7,37 +8,60 @@ require 'uri'
 =begin
     @param crawlable is the Crawlable object to be crawled
 =end
+class Crawler
+  MAX_CRAWLS = 20   # TODO: Determine the max number of crawls we want
 
-def start_crawling(crawlable)
-  Spidr.site(crawlable.url, ignore_links: crawlable.ignored_urls) do |spider|
-    o = 0
-    spider.every_url do |url|
-      link_object = CrawlableSites::Crawlable.new(url=url)
-      page = Nokogiri::HTML(open(url))
+  def initialize(crawlable)
+    @crawlable = crawlable
+    @@dataset ||= Google::Cloud::Datastore.new(project_id: "codegust")
+  end
 
-      # searchs for the main components needed in crawlable object passed
-      crawlable.main_divs.each do |search_for|
-        parsed_page = page.search(search_for)
-        link_object.main_divs << parsed_page if parsed_page.count != 0
-      end
+  def start_crawling()
+    Spidr.site(@crawlable.url, ignore_links: @crawlable.ignored_urls) do |spider|
+      cnt = 0
+      spider.every_url do |url|
+        crawled_page = CrawlablePages::Crawlable.new(url=url)
+        raw_page = Nokogiri::HTML(open(url))
 
-      # searchs for the scoring components needed in crawlable object passed
-      crawlable.score_divs.each do |search_for|
-        link_object.score_divs << page.search(search_for)
-      end if link_object.main_divs.count != 0
+        # searchs for the main components needed in crawlable object passed
+        @crawlable.main_divs.each do |search_for|
+          parsed_page = raw_page.search(search_for)
+          crawled_page.main_divs << parsed_page.text if parsed_page.count != 0
+        end
 
-      ######################################################################
-      # TODO: should be removed! this is just for testing on personal computers
-      # test the output
-      puts ">>#{link_object.url}"
-      puts link_object.main_divs
-      puts ">>>>>"
-      puts link_object.score_divs
-      if o == 20
-        return
-      end
-      o += 1
-      ######################################################################
+        # searchs for the scoring components needed in crawlable object passed
+        @crawlable.score_divs.each do |search_for|
+          crawled_page.score_divs << raw_page.search(search_for)  #TODO .text ?
+        end if crawled_page.main_divs.count != 0
+
+        # skip this page if it does not contain the divs we need
+        if crawled_page.score_divs.empty?
+          next
+        end
+
+        # save to Datastore
+        add_to_datastore(crawled_page.url.to_s, crawled_page.main_divs.to_s)
+
+        puts crawled_page.url   # DEBUG
+
+        # stop crawling after some number of pages
+        if cnt == MAX_CRAWLS
+          return
+        end
+
+        cnt += 1
       end
     end
+  end
+
+  private
+
+  def add_to_datastore(page_url, page_html)
+    entity = Google::Cloud::Datastore::Entity.new
+    entity.key = Google::Cloud::Datastore::Key.new "page", page_url
+    entity["page_url"] = page_url
+    entity["page_html"] = page_html if page_html
+    entity.exclude_from_indexes! "page_html", true
+    @@dataset.save entity
+  end
 end

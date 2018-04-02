@@ -1,5 +1,5 @@
 
-class CrawlableSites
+class CrawlablePages
   class Crawlable
     attr_accessor :url, :ignored_urls, :main_divs, :score_divs
 
