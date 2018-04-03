@@ -43,8 +43,8 @@ class Crawler
         # save to Datastore
         add_to_datastore(crawled_page.url.to_s, crawled_page.main_divs.to_s)
 
-        # Crawler Politness
-        sleep 30
+        # Crawler Politeness
+        sleep 5
          
         puts crawled_page.url         # DEBUG
         puts crawled_page.score_divs  # DEBUG
