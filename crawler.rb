@@ -63,7 +63,7 @@ class Crawler
   private
 
   # Requests and returns the page given the url.
-  # Waits if needed to comply to the politeness policy
+  # Waits if needed to comply to the politeness policy.
   def get_page(url)
     time_passed = Time.now.to_i - @last_request_time
     if time_passed < POLITENESS_POLICY_GAP
