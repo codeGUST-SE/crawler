@@ -43,7 +43,8 @@ class Crawler
         # save to Datastore
         add_to_datastore(crawled_page.url.to_s, crawled_page.main_divs.to_s)
 
-        puts crawled_page.url   # DEBUG
+        puts crawled_page.url         # DEBUG
+        puts crawled_page.score_divs  # DEBUG
 
         # stop crawling after some number of pages
         if cnt == @max_crawls
