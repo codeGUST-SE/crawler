@@ -31,7 +31,7 @@ class Crawler
         # searchs for the main components needed in crawlable object passed
         @crawlable.main_divs.each do |search_for|
           parsed_page = raw_page.search(search_for)
-          crawled_page.main_divs << parsed_page.text.gsub("\n", " ") if parsed_page.count != 0
+          crawled_page.main_divs << parsed_page.text.gsub('\n', "\n") if parsed_page.count != 0
         end
 
         # searchs for the scoring components needed in crawlable object passed
@@ -45,7 +45,7 @@ class Crawler
         end
 
         # save to Datastore
-        add_to_datastore(crawled_page.url.to_s, crawled_page.main_divs.to_s)
+        add_to_datastore(crawled_page.url.to_s, crawled_page.main_divs.join("\n"))
 
         puts crawled_page.url         # DEBUG
         puts crawled_page.score_divs  # DEBUG
