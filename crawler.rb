@@ -31,7 +31,9 @@ class Crawler
         # searchs for the main components needed in crawlable object passed
         @crawlable.main_divs.each do |search_for|
           parsed_page = raw_page.search(search_for)
-          crawled_page.main_divs << parsed_page.text.to_s.gsub('\n', "\n").gsub(/\n\n*/, "\n") if parsed_page.count != 0
+          if parsed_page.count != 0
+            crawled_page.main_divs << transform_text(parsed_page.text.to_s)
+          end
         end
 
         # searchs for the scoring components needed in crawlable object passed
@@ -72,6 +74,14 @@ class Crawler
     raw_page = Nokogiri::HTML(open(url))
     @last_request_time = Time.now.to_i
     raw_page
+  end
+
+  def transform_text(page)
+    transformed_page =
+      page.gsub('\n', "\n").gsub(/\n\n*/, "\n")
+          .gsub('\t', "\t").gsub(/\t\t*/, "\t")
+          .gsub(/  */, " ")
+    transformed_page
   end
 
   def add_to_datastore(page_url, page_html)
