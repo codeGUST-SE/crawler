@@ -12,6 +12,7 @@ require 'uri'
 class Crawler
 
   POLITENESS_POLICY_GAP = 30  # wait at least 30 seconds between each request
+  MAX_TRIES = 3               # max number of tries to retrieve a page
 
   def initialize(crawlable, limit)
     @crawlable = crawlable
@@ -26,6 +27,10 @@ class Crawler
       spider.every_url do |url|
 
         raw_page = get_page(url)
+        if raw_page == nil
+          next
+        end
+
         crawled_page = CrawlablePages::Crawlable.new(url=url)
 
         # searchs for the main components needed in crawlable object passed
@@ -66,12 +71,27 @@ class Crawler
 
   # Requests and returns the page given the url.
   # Waits if needed to comply to the politeness policy.
+  # Returns nil if it couldn't retrieve the page.
   def get_page(url)
     time_passed = Time.now.to_i - @last_request_time
     if time_passed < POLITENESS_POLICY_GAP
       sleep(POLITENESS_POLICY_GAP - time_passed)
     end
-    raw_page = Nokogiri::HTML(open(url))
+
+    done = false
+    tries = 0
+    while !done and tries < MAX_TRIES
+      begin
+        tries += 1
+        raw_page = Nokogiri::HTML(open(url))
+        done = true
+      rescue OpenURI::HTTPError # 429 Too Many Requests
+        sleep(POLITENESS_POLICY_GAP * tries)
+      rescue                    # TODO: handle other types of exceptions
+        raw_page = nil
+      end
+    end
+
     @last_request_time = Time.now.to_i
     raw_page
   end
