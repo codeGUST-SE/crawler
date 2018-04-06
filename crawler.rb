@@ -11,7 +11,7 @@ require 'uri'
 =end
 class Crawler
 
-  POLITENESS_POLICY_GAP = 30  # wait at least 30 seconds between each request
+  POLITENESS_POLICY_GAP = 0  # wait at least 30 seconds between each request
   MAX_TRIES = 3               # max number of tries to retrieve a page
 
   def initialize(crawlable, limit)
@@ -97,13 +97,11 @@ class Crawler
   end
 
   def transform_text(page)
-    transformed_page =
-      page.gsub('\n', "\n")
-          .gsub('\t', "\t")
-          .gsub(/\s\s*/, "\s")
-          .gsub(/\s\n/, "\n")
-          .gsub(/\n\n*/, "\n")
+    transformed_page = 
+      page.gsub(/\n+/, "\n")
           .gsub(/\t\t*/, "\t")
+          .gsub(/\s*\n/, "\n")
+      
     transformed_page
   end
 
