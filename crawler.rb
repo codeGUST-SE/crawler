@@ -99,7 +99,10 @@ class Crawler
   end
 
   def transform_text(page)
-    transformed_page = page.gsub(/\s+/, ' ').strip()
+    transformed_page =
+      page.gsub(/[\u0080-\u00ff]/, '')  # remove non-ascii chars
+          .gsub(/\s+/, ' ')             # remove multiple whitespace chars
+          .strip()
     transformed_page
   end
 
