@@ -45,17 +45,20 @@ class Crawler
         # read the <title> tag the page
         crawled_page.title = raw_page.search('title').text.to_s
 
-        # # searchs for the scoring components needed in crawlable object passed
-        # @crawlable.score_divs.each do |search_for|
-        #   crawled_page.page_scores += raw_page.search(search_for).text.to_s #TODO .text ?
-        # end
+        # searchs for the scoring components needed in crawlable object passed
+        @crawlable.score_divs.each do |score_name, search_for|
+          parsed_score = raw_page.search(search_for)
+          if parsed_score.count != 0
+            crawled_page.page_scores += "#{:score_name}:#{parsed_score.text.to_s}"
+          end
+        end
 
         # save to Datastore
         add_to_datastore(crawled_page)
 
         puts crawled_page.url         # DEBUG
         puts crawled_page.title       # DEBUG
-        puts crawled_page.page_html   # DEBUG
+        # puts crawled_page.page_scores   # DEBUG
 
         # stop crawling after some number of pages
         if cnt == @max_crawls
