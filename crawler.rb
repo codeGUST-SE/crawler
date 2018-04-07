@@ -11,7 +11,7 @@ require 'uri'
 =end
 class Crawler
 
-  POLITENESS_POLICY_GAP = 30  # wait at least 30 seconds between each request
+  POLITENESS_POLICY_GAP = 0  # wait at least 30 seconds between each request
   MAX_TRIES = 3               # max number of tries to retrieve a page
 
   def initialize(crawlable, limit)
@@ -31,11 +31,11 @@ class Crawler
 
         crawled_page = CrawlablePages::CrawledPage.new(url=url.to_s)
 
-        # searchs for the main components needed in crawlable object passed
+        # searchs for the main components needed in crawlable object
         @crawlable.main_divs.each do |search_for|
-          parsed_page = raw_page.search(search_for)
-          if parsed_page.count != 0
-            crawled_page.page_html += transform_text(parsed_page.text.to_s) + ' '
+          parsed_page = raw_page.xpath(search_for).text.to_s
+          if parsed_page.length != 0
+            crawled_page.page_html += transform_text(parsed_page) + ' '
           end
         end
 
@@ -45,20 +45,20 @@ class Crawler
         # read the <title> tag the page
         crawled_page.title = raw_page.search('title').text.to_s
 
-        # searchs for the scoring components needed in crawlable object passed
+        # searchs for the scoring components needed in crawlable object
         @crawlable.score_divs.each do |score_name, search_for|
-          parsed_score = raw_page.search(search_for)
-          if parsed_score.count != 0
-            crawled_page.page_scores += "#{:score_name}:#{parsed_score.text.to_s}"
+          parsed_score = raw_page.xpath(search_for).text.to_i.to_s
+          if parsed_score.length != 0
+            crawled_page.page_scores += "[#{score_name}:#{transform_text(parsed_score)}]"
           end
         end
 
         # save to Datastore
         add_to_datastore(crawled_page)
 
-        puts crawled_page.url         # DEBUG
-        puts crawled_page.title       # DEBUG
-        # puts crawled_page.page_scores   # DEBUG
+        puts crawled_page.url              # DEBUG
+        puts crawled_page.title            # DEBUG
+        puts crawled_page.page_scores      # DEBUG
 
         # stop crawling after some number of pages
         if cnt == @max_crawls
@@ -110,8 +110,10 @@ class Crawler
     entity["page_url"] = crawled_page.url
     entity["page_title"] = crawled_page.title
     entity["page_html"] = crawled_page.page_html
+    entity["page_scores"] = crawled_page.page_scores
     entity.exclude_from_indexes! "page_html", true
     entity.exclude_from_indexes! "page_title", true
+    entity.exclude_from_indexes! "page_scores", true
     @@dataset.save entity
   end
 
