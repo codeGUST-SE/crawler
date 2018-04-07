@@ -61,7 +61,7 @@ class Crawler
         puts crawled_page.page_scores      # DEBUG
 
         # stop crawling after some number of pages
-        if cnt == @max_crawls
+        if cnt == @max_crawls - 1
           return
         end
 
