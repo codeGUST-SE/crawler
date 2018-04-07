@@ -87,9 +87,13 @@ class Crawler
         tries += 1
         raw_page = Nokogiri::HTML(open(url))
         done = true
-      rescue OpenURI::HTTPError # 429 Too Many Requests
-        sleep(POLITENESS_POLICY_GAP * tries)
-      rescue                    # TODO: handle other types of exceptions
+      rescue OpenURI::HTTPError => e
+        if e.message =~ /429/    # 429 Too Many Requests
+          sleep(POLITENESS_POLICY_GAP * tries)
+        else
+          raw_page = nil
+        end
+      rescue    # TODO: handle other types of exceptions
         raw_page = nil
       end
     end
