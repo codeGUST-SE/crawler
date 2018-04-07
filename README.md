@@ -27,10 +27,10 @@ Note that the lines in the beginning of the file starting with # will be ignored
 
 ## Start crawling!
 
-Command line arguments are required:
+Command line arguments:
 ```
--i, --input_file INPUT_FILE      Input filename in ./crawlables/ [required]
--l, --limit LIMIT                Crawling limit [required]
+-i, --input_file INPUT_FILE      [REQUIRED] Input filename in ./crawlables/
+-l, --limit LIMIT                [REQUIRED] Crawling limit
 -u, --url URL                    Alternative starting URL
 --prod                           Production environment if set, development if not set
 ```
