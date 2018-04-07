@@ -99,11 +99,7 @@ class Crawler
   end
 
   def transform_text(page)
-    transformed_page =
-      page.gsub(/\n+/, "\n")
-          .gsub(/\t\t*/, "\t")
-          .gsub(/\s*\n/, "\n")
-
+    transformed_page = page.gsub(/\s+/, ' ').strip()
     transformed_page
   end
 
