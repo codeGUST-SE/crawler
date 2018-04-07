@@ -118,6 +118,7 @@ class Crawler
     entity["page_title"] = crawled_page.title
     entity["page_html"] = crawled_page.page_html
     entity["page_scores"] = crawled_page.page_scores
+    entity["timestamp"] = Time.now.to_i
     entity.exclude_from_indexes! "page_html", true
     entity.exclude_from_indexes! "page_title", true
     entity.exclude_from_indexes! "page_scores", true
