@@ -1,7 +1,11 @@
 # Crawl all GitHub
 {
-  'url' => 'https://github.com/',
-  'ignored_urls' => [/features/,/business/,/explore/,/marketplace/,/pricing/,/dashboard/,/login(.*)/,/join(.*)/,/features(.*)/,/personal(.*)/,/about(.*)/,/contact(.*)/,/site(.*)/,/blog(.*)/,/opensearch.xml/,/fluidicon.png/,/manifest.json/,/stories(.*)/,/issues(.*)/,/pulls(.*)/,/commit(.*)/,/search(.*)/,/archive(.*)/,/find(.*)/, /pull(.*)/,/branches(.*)/,/graphs(.)/,/network(.*)/,/blame(.*)/,/releases/,/wiki/,/pulse/,/settings/,/(.)page=(.)/,/release(.*)/,/raw(.)master/,/tree(.)(?!master)(.*)/,/blob(.)(?!master)(.*)/,/topics(.*)/,/watchers(.*)/,/stargazers/],
-  'main_divs' => ['//*[@id="readme"]','//*[@id="js-repo-pjax-container"]/div[2]/div[1]/div[3]/div[2]'],
-  'score_divs' => ['//*[@id="js-repo-pjax-container"]/div[1]/div/ul/li[1]/a[2]','//*[@id="js-repo-pjax-container"]/div[1]/div/ul/li[2]/a[2]','//*[@id="js-repo-pjax-container"]/div[1]/div/ul/li[3]/a[2]']
+  :url => 'https://github.com/',
+  :ignored_urls => [/features/,/business/,/explore/,/marketplace/,/pricing/,/dashboard/,/login(.*)/,/join(.*)/,/features(.*)/,/personal(.*)/,/about(.*)/,/contact(.*)/,/site(.*)/,/blog(.*)/,/opensearch.xml/,/fluidicon.png/,/manifest.json/,/stories(.*)/,/issues(.*)/,/pulls(.*)/,/commit(.*)/,/search(.*)/,/archive(.*)/,/find(.*)/, /pull(.*)/,/branches(.*)/,/graphs(.)/,/network(.*)/,/blame(.*)/,/releases/,/wiki/,/pulse/,/settings/,/(.)page=(.)/,/release(.*)/,/raw(.)master/,/tree(.)(?!master)(.*)/,/blob(.)(?!master)(.*)/,/topics(.*)/,/watchers(.*)/,/stargazers/],
+  :main_divs => ['//*[@id="readme"]','//*[@id="js-repo-pjax-container"]/div[2]/div[1]/div[3]/div[2]'],
+  :score_divs => {
+    :stargazers => '//*[@id="js-repo-pjax-container"]/div[1]/div/ul/li[1]/a[2]',
+    :watchers => '//*[@id="js-repo-pjax-container"]/div[1]/div/ul/li[2]/a[2]',
+    :forks => '//*[@id="js-repo-pjax-container"]/div[1]/div/ul/li[3]/a[2]'
+  }
 }

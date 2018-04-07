@@ -1,7 +1,7 @@
 # Crawl tutorialspoint
 {
-  'url' => 'https://www.tutorialspoint.com/',
-  'ignored_urls' => [],
-  'main_divs' => [],
-  'score_divs' => []
+  :url => 'https://www.tutorialspoint.com/',
+  :ignored_urls => [],
+  :main_divs => [],
+  :score_divs => {}
 }
