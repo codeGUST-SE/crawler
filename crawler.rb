@@ -27,35 +27,31 @@ class Crawler
       spider.every_url do |url|
 
         raw_page = get_page(url)
-        if raw_page == nil
-          next
-        end
+        next if raw_page == nil
 
-        crawled_page = CrawlablePages::Crawlable.new(url=url)
+        crawled_page = CrawlablePages::CrawledPage.new(url=url.to_s)
 
         # searchs for the main components needed in crawlable object passed
         @crawlable.main_divs.each do |search_for|
           parsed_page = raw_page.search(search_for)
           if parsed_page.count != 0
-            crawled_page.main_divs << transform_text(parsed_page.text.to_s)
+            crawled_page.page_html += transform_text(parsed_page.text.to_s) + ' '
           end
         end
 
-        # searchs for the scoring components needed in crawlable object passed
-        @crawlable.score_divs.each do |search_for|
-          crawled_page.score_divs << raw_page.search(search_for)  #TODO .text ?
-        end if crawled_page.main_divs.count != 0
-
         # skip this page if it does not contain the divs we need
-        if crawled_page.main_divs.empty?
-          next
-        end
+        next if crawled_page.page_html.empty?
+
+        # # searchs for the scoring components needed in crawlable object passed
+        # @crawlable.score_divs.each do |search_for|
+        #   crawled_page.page_scores += raw_page.search(search_for).text.to_s #TODO .text ?
+        # end
 
         # save to Datastore
-        add_to_datastore(crawled_page.url.to_s, crawled_page.main_divs.join("\n"))
+        add_to_datastore(crawled_page)
 
         puts crawled_page.url         # DEBUG
-        puts crawled_page.score_divs  # DEBUG
+        puts crawled_page.page_html  # DEBUG
 
         # stop crawling after some number of pages
         if cnt == @max_crawls
@@ -101,11 +97,11 @@ class Crawler
     transformed_page
   end
 
-  def add_to_datastore(page_url, page_html)
+  def add_to_datastore(crawled_page)
     entity = Google::Cloud::Datastore::Entity.new
-    entity.key = Google::Cloud::Datastore::Key.new "page", page_url
-    entity["page_url"] = page_url
-    entity["page_html"] = page_html if page_html
+    entity.key = Google::Cloud::Datastore::Key.new "page", crawled_page.url
+    entity["page_url"] = crawled_page.url
+    entity["page_html"] = crawled_page.page_html
     entity.exclude_from_indexes! "page_html", true
     @@dataset.save entity
   end

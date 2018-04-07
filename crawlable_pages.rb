@@ -39,4 +39,15 @@ class CrawlablePages
     end
   end
 
+  class CrawledPage
+    attr_accessor :url, :title, :page_html, :page_scores
+
+    def initialize(url = '', title = '', page_html = '', page_scores = '')
+      @url = url
+      @title = title
+      @page_html = page_html
+      @page_scores = page_scores
+    end
+  end
+
 end
