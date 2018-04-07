@@ -2,9 +2,9 @@
 {
   :url => 'https://stackoverflow.com/questions',
   :ignored_urls => [/#/,/q.[1-9].*/,/questions.ask/,/user(.*)/,/.jobs(.*)/,/tags(.*)/,/help(.*)/,/tour(.*)/,/.subject=Stack%20Overflow%20Question.*/,/company(.*)/,/tagged(.*)/,/.tab(.*)/,/election(.*)/,/opensearch.xml/,/com.((?!questions)).*/,/(.)lastactivity(.*)/,/edit/,/com(.)(?!.*)/,/(.*)mailto:?(.*)/],
-  :main_divs => ['div#question-header a.question-hyperlink','div.postcell','div.answercell'],
+  :main_divs => ['//*[@id="question-header"]/h1/a','//*[@id="question"]/div[2]/div[2]/div[1]', '//*[@id="question"]/div[2]/div[2]/div[2]', '//*[@class="answer"]/div/div[2]/div[1]', '//*[@class="answer accepted-answer"]/div/div[2]/div[1]'],
   :score_divs => {
-    :votes => 'div.vote',
-    :favorites => 'div.favoritecount'
+    :votes => '//*[@id="question"]/div[2]/div[1]/div/span',
+    :favorites => '//*[@id="question"]/div[2]/div[1]/div/div/b'
   }
 }

@@ -2,10 +2,10 @@
 {
   :url => 'https://github.com/',
   :ignored_urls => [/features/,/business/,/explore/,/marketplace/,/pricing/,/dashboard/,/login(.*)/,/join(.*)/,/features(.*)/,/personal(.*)/,/about(.*)/,/contact(.*)/,/site(.*)/,/blog(.*)/,/opensearch.xml/,/fluidicon.png/,/manifest.json/,/stories(.*)/,/issues(.*)/,/pulls(.*)/,/commit(.*)/,/search(.*)/,/archive(.*)/,/find(.*)/, /pull(.*)/,/branches(.*)/,/graphs(.)/,/network(.*)/,/blame(.*)/,/releases/,/wiki/,/pulse/,/settings/,/(.)page=(.)/,/release(.*)/,/raw(.)master/,/tree(.)(?!master)(.*)/,/blob(.)(?!master)(.*)/,/topics(.*)/,/watchers(.*)/,/stargazers/],
-  :main_divs => ['div#readme','div.blob-wrapper'],
+  :main_divs => ['//*[@id="readme"]','//*[@id="js-repo-pjax-container"]/div[2]/div[1]/div[3]/div[2]'],
   :score_divs => {
-    :stargazers => 'div.js-toggler-container.js-social-container.starring-container a.social-count js-social-count',
-    :watchers => 'div.select-menu.js-menu-container.js-select-menu a.social-count.js-social-count',
-    :forks => 'li a.social-count'
+    :stargazers => '//*[@id="js-repo-pjax-container"]/div[1]/div/ul/li[1]/a[2]',
+    :watchers => '//*[@id="js-repo-pjax-container"]/div[1]/div/ul/li[2]/a[2]',
+    :forks => '//*[@id="js-repo-pjax-container"]/div[1]/div/ul/li[3]/a[2]'
   }
 }
