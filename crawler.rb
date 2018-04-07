@@ -42,6 +42,9 @@ class Crawler
         # skip this page if it does not contain the divs we need
         next if crawled_page.page_html.empty?
 
+        # read the <title> tag the page
+        crawled_page.title = raw_page.search('title').text.to_s
+
         # # searchs for the scoring components needed in crawlable object passed
         # @crawlable.score_divs.each do |search_for|
         #   crawled_page.page_scores += raw_page.search(search_for).text.to_s #TODO .text ?
@@ -51,7 +54,8 @@ class Crawler
         add_to_datastore(crawled_page)
 
         puts crawled_page.url         # DEBUG
-        puts crawled_page.page_html  # DEBUG
+        puts crawled_page.title       # DEBUG
+        puts crawled_page.page_html   # DEBUG
 
         # stop crawling after some number of pages
         if cnt == @max_crawls
@@ -101,8 +105,10 @@ class Crawler
     entity = Google::Cloud::Datastore::Entity.new
     entity.key = Google::Cloud::Datastore::Key.new "page", crawled_page.url
     entity["page_url"] = crawled_page.url
+    entity["page_title"] = crawled_page.title
     entity["page_html"] = crawled_page.page_html
     entity.exclude_from_indexes! "page_html", true
+    entity.exclude_from_indexes! "page_title", true
     @@dataset.save entity
   end
 
