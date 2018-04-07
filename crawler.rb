@@ -58,7 +58,7 @@ class Crawler
 
         puts crawled_page.url              # DEBUG
         puts crawled_page.title            # DEBUG
-        puts crawled_page.page_scores      # DEBUG
+        puts crawled_page.page_html        # DEBUG
 
         # stop crawling after some number of pages
         if cnt == @max_crawls - 1
