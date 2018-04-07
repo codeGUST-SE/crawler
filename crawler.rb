@@ -35,26 +35,28 @@ class Crawler
 
         # searchs for the main components needed in crawlable object passed
         @crawlable.main_divs.each do |search_for|
-          parsed_page = raw_page.search(search_for)
-          if parsed_page.count != 0
-            crawled_page.main_divs << transform_text(parsed_page.text.to_s)
+          parsed_page = raw_page.xpath(search_for).text.to_s
+          if parsed_page.length != 0
+            crawled_page.main_divs << transform_text(parsed_page)
           end
         end
 
+        # skip this page if it does not contain the divs we need
+        next if crawled_page.main_divs.empty?
+
         # searchs for the scoring components needed in crawlable object passed
         @crawlable.score_divs.each do |search_for|
-          crawled_page.score_divs << raw_page.search(search_for)  #TODO .text ?
-        end if crawled_page.main_divs.count != 0
-
-        # skip this page if it does not contain the divs we need
-        if crawled_page.main_divs.empty?
-          next
+          parsed_scores = raw_page.xpath(search_for).text.to_s
+          if parsed_scores.length != 0
+            crawled_page.score_divs << transform_text(parsed_scores)
+          end
         end
 
         # save to Datastore
         add_to_datastore(crawled_page.url.to_s, crawled_page.main_divs.join("\n"))
 
         puts crawled_page.url         # DEBUG
+        puts crawled_page.main_divs  # DEBUG
         puts crawled_page.score_divs  # DEBUG
 
         # stop crawling after some number of pages
@@ -97,11 +99,11 @@ class Crawler
   end
 
   def transform_text(page)
-    transformed_page = 
+    transformed_page =
       page.gsub(/\n+/, "\n")
           .gsub(/\t\t*/, "\t")
           .gsub(/\s*\n/, "\n")
-      
+
     transformed_page
   end
 
