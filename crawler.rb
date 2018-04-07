@@ -47,7 +47,7 @@ class Crawler
 
         # searchs for the scoring components needed in crawlable object
         @crawlable.score_divs.each do |score_name, search_for|
-          parsed_score = raw_page.xpath(search_for).text.to_i.to_s
+          parsed_score = raw_page.xpath(search_for).text.to_s.gsub(/[^0-9]/, '')
           if parsed_score.length != 0
             crawled_page.page_scores += "[#{score_name}:#{transform_text(parsed_score)}]"
           end
