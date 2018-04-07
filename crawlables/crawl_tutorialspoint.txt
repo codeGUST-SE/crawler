@@ -1,7 +1,7 @@
 # Crawl tutorialspoint
 {
-  'url' => 'https://www.tutorialspoint.com/',
-  'ignored_urls' => [],
+  'url' => 'https://tutorialspoint.com/',
+  'ignored_urls' => [/\b(?!(java|guice)\b)\w+/],
   'main_divs' => [],
   'score_divs' => []
 }
