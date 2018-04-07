@@ -27,40 +27,41 @@ class Crawler
       spider.every_url do |url|
 
         raw_page = get_page(url)
-        if raw_page == nil
-          next
-        end
+        next if raw_page == nil
 
-        crawled_page = CrawlablePages::Crawlable.new(url=url)
+        crawled_page = CrawlablePages::CrawledPage.new(url=url.to_s)
 
-        # searchs for the main components needed in crawlable object passed
+        # searchs for the main components needed in crawlable object
         @crawlable.main_divs.each do |search_for|
           parsed_page = raw_page.xpath(search_for).text.to_s
           if parsed_page.length != 0
-            crawled_page.main_divs << transform_text(parsed_page)
+            crawled_page.page_html += transform_text(parsed_page) + ' '
           end
         end
 
         # skip this page if it does not contain the divs we need
-        next if crawled_page.main_divs.empty?
+        next if crawled_page.page_html.empty?
 
-        # searchs for the scoring components needed in crawlable object passed
-        @crawlable.score_divs.each do |search_for|
-          parsed_scores = raw_page.xpath(search_for).text.to_s
-          if parsed_scores.length != 0
-            crawled_page.score_divs << transform_text(parsed_scores)
+        # read the <title> tag the page
+        crawled_page.title = raw_page.search('title').text.to_s
+
+        # searchs for the scoring components needed in crawlable object
+        @crawlable.score_divs.each do |score_name, search_for|
+          parsed_score = raw_page.xpath(search_for).text.to_s.gsub(/[^0-9]/, '')
+          if parsed_score.length != 0
+            crawled_page.page_scores += "[#{score_name}:#{transform_text(parsed_score)}]"
           end
         end
 
         # save to Datastore
-        add_to_datastore(crawled_page.url.to_s, crawled_page.main_divs.join("\n"))
+        add_to_datastore(crawled_page)
 
-        puts crawled_page.url         # DEBUG
-        puts crawled_page.main_divs  # DEBUG
-        puts crawled_page.score_divs  # DEBUG
+        puts crawled_page.url              # DEBUG
+        puts crawled_page.title            # DEBUG
+        puts crawled_page.page_scores      # DEBUG
 
         # stop crawling after some number of pages
-        if cnt == @max_crawls
+        if cnt == @max_crawls - 1
           return
         end
 
@@ -87,9 +88,13 @@ class Crawler
         tries += 1
         raw_page = Nokogiri::HTML(open(url))
         done = true
-      rescue OpenURI::HTTPError # 429 Too Many Requests
-        sleep(POLITENESS_POLICY_GAP * tries)
-      rescue                    # TODO: handle other types of exceptions
+      rescue OpenURI::HTTPError => e
+        if e.message =~ /429/    # 429 Too Many Requests
+          sleep(POLITENESS_POLICY_GAP * tries)
+        else
+          raw_page = nil
+        end
+      rescue    # TODO: handle other types of exceptions
         raw_page = nil
       end
     end
@@ -99,16 +104,24 @@ class Crawler
   end
 
   def transform_text(page)
-    transformed_page = page.gsub(/\s+/, ' ').strip()
+    transformed_page =
+      page.gsub(/[\u0080-\u00ff]/, '')  # remove non-ascii chars
+          .gsub(/\s+/, ' ')             # remove multiple whitespace chars
+          .strip()
     transformed_page
   end
 
-  def add_to_datastore(page_url, page_html)
+  def add_to_datastore(crawled_page)
     entity = Google::Cloud::Datastore::Entity.new
-    entity.key = Google::Cloud::Datastore::Key.new "page", page_url
-    entity["page_url"] = page_url
-    entity["page_html"] = page_html if page_html
+    entity.key = Google::Cloud::Datastore::Key.new "page", crawled_page.url
+    entity["page_url"] = crawled_page.url
+    entity["page_title"] = crawled_page.title
+    entity["page_html"] = crawled_page.page_html
+    entity["page_scores"] = crawled_page.page_scores
+    entity["timestamp"] = Time.now.to_i
     entity.exclude_from_indexes! "page_html", true
+    entity.exclude_from_indexes! "page_title", true
+    entity.exclude_from_indexes! "page_scores", true
     @@dataset.save entity
   end
 
