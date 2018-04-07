@@ -1,5 +1,5 @@
 # Spidr is the library used to crawl the internet
-require "google/cloud/datastore"
+require 'google/cloud/datastore'
 require 'spidr'
 require 'nokogiri'
 require 'open-uri'
@@ -11,14 +11,23 @@ require 'uri'
 =end
 class Crawler
 
-  POLITENESS_POLICY_GAP = 30  # wait at least 30 seconds between each request
+  # PROD constants
+  POLITENESS_POLICY_GAP_PROD = 30
+  DATASTORE_KIND_PROD = 'page'
+
+  # DEV constants
+  POLITENESS_POLICY_GAP_DEV = 0
+  DATASTORE_KIND_DEV = 'page_dev'
+
   MAX_TRIES = 3               # max number of tries to retrieve a page
 
-  def initialize(crawlable, limit)
+  def initialize(crawlable, limit, is_prod)
     @crawlable = crawlable
     @max_crawls = limit
     @last_request_time = 0
-    @@dataset ||= Google::Cloud::Datastore.new(project_id: "codegust")
+    @datastore_kind = is_prod ? DATASTORE_KIND_PROD : DATASTORE_KIND_DEV
+    @politeness_policy_gap = is_prod ? POLITENESS_POLICY_GAP_PROD : POLITENESS_POLICY_GAP_DEV
+    @@dataset ||= Google::Cloud::Datastore.new(project_id: 'codegust')
   end
 
   def start_crawling()
@@ -77,8 +86,8 @@ class Crawler
   # Returns nil if it couldn't retrieve the page.
   def get_page(url)
     time_passed = Time.now.to_i - @last_request_time
-    if time_passed < POLITENESS_POLICY_GAP
-      sleep(POLITENESS_POLICY_GAP - time_passed)
+    if time_passed < @politeness_policy_gap
+      sleep(@politeness_policy_gap - time_passed)
     end
 
     done = false
@@ -90,7 +99,7 @@ class Crawler
         done = true
       rescue OpenURI::HTTPError => e
         if e.message =~ /429/    # 429 Too Many Requests
-          sleep(POLITENESS_POLICY_GAP * tries)
+          sleep(@politeness_policy_gap * tries)
         else
           raw_page = nil
         end
@@ -113,15 +122,15 @@ class Crawler
 
   def add_to_datastore(crawled_page)
     entity = Google::Cloud::Datastore::Entity.new
-    entity.key = Google::Cloud::Datastore::Key.new "page", crawled_page.url
-    entity["page_url"] = crawled_page.url
-    entity["page_title"] = crawled_page.title
-    entity["page_html"] = crawled_page.page_html
-    entity["page_scores"] = crawled_page.page_scores
-    entity["timestamp"] = Time.now.to_i
-    entity.exclude_from_indexes! "page_html", true
-    entity.exclude_from_indexes! "page_title", true
-    entity.exclude_from_indexes! "page_scores", true
+    entity.key = Google::Cloud::Datastore::Key.new @datastore_kind, crawled_page.url
+    entity['page_url'] = crawled_page.url
+    entity['page_title'] = crawled_page.title
+    entity['page_html'] = crawled_page.page_html
+    entity['page_scores'] = crawled_page.page_scores
+    entity['timestamp'] = Time.now.to_i
+    entity.exclude_from_indexes! 'page_html', true
+    entity.exclude_from_indexes! 'page_title', true
+    entity.exclude_from_indexes! 'page_scores', true
     @@dataset.save entity
   end
 
