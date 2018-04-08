@@ -1,7 +1,14 @@
 # Crawl all Geeksforgeeks
 {
   :url => 'https://www.geeksforgeeks.org',
-  :links => [/algorithm/,/interview/,/geeksforgeeks.org$/],
-  :main_divs => [],
+  :links => [
+    /algorithm/,/interview/,/java/,/python/,/c-programming-language/,
+    /c-plus-plus/,/python-programming-language/,/sql-tutorial/,/php/,
+    /javascript-tutorial/,/geeksforgeeks.org$/
+  ],
+  :main_divs => [
+    '/html/body/div[3]/div[2]/div/article/header/h1',
+    '/html/body/div[3]/div[2]/div/article/div'
+  ],
   :score_divs => {}
 }
