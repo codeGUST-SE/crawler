@@ -34,17 +34,10 @@ class Crawler
       links: @crawlable.links) do |spider|
 
       spider.every_html_page do |raw_page|
-
+        
         crawled_page = CrawlablePages::CrawledPage.new(url= raw_page.url.to_s)
         crawled_page.title = raw_page.title
-
-        # searchs for the main components needed in crawlable object
-        @crawlable.main_divs.each do |search_for|
-          parsed_page = raw_page.search(search_for).text.to_s
-          if parsed_page.length != 0
-            crawled_page.page_html += transform_text(parsed_page) + ' '
-          end
-        end
+        crawled_page.page_html = transform_text(raw_page.search(*@crawlable.main_divs).text.to_s)
 
         # skip this page if it does not contain the divs we need
         next if crawled_page.page_html.empty?
