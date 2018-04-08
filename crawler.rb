@@ -35,12 +35,12 @@ class Crawler
       limit: @max_crawls, ignore_links: @crawlable.ignore_links,
       links: @crawlable.links) do |spider|
 
-      spider.every_url do |url|
+      spider.every_html_page do |page|
+        url = page.url.to_s
+        raw_page = Nokogiri::HTML(page.doc.to_s)
 
-        raw_page = get_page(url)
-        next if raw_page == nil
-
-        crawled_page = CrawlablePages::CrawledPage.new(url=url.to_s)
+        crawled_page = CrawlablePages::CrawledPage.new(url=url)
+        crawled_page.title = page.title
 
         # searchs for the main components needed in crawlable object
         @crawlable.main_divs.each do |search_for|
@@ -52,9 +52,6 @@ class Crawler
 
         # skip this page if it does not contain the divs we need
         next if crawled_page.page_html.empty?
-
-        # read the <title> tag the page
-        crawled_page.title = raw_page.search('title').text.to_s
 
         # searchs for the scoring components needed in crawlable object
         @crawlable.score_divs.each do |score_name, search_for|
@@ -75,29 +72,6 @@ class Crawler
   end
 
   private
-
-  # Requests and returns the page given the url.
-  # Returns nil if it couldn't retrieve the page.
-  def get_page(url)
-    done = false
-    tries = 0
-    while !done and (tries < MAX_TRIES)
-      begin
-        tries += 1
-        raw_page = Nokogiri::HTML(open(url))
-        done = true
-      rescue OpenURI::HTTPError => e
-        if e.message =~ /429/    # 429 Too Many Requests
-          sleep(@politeness_policy_gap * tries)
-        else
-          raw_page = nil
-        end
-      rescue    # TODO: handle other types of exceptions
-        raw_page = nil
-      end
-    end
-    raw_page
-  end
 
   def transform_text(page)
     transformed_page =
