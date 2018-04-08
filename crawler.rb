@@ -33,16 +33,14 @@ class Crawler
       limit: @max_crawls, ignore_links: @crawlable.ignore_links,
       links: @crawlable.links) do |spider|
 
-      spider.every_html_page do |page|
-        url = page.url.to_s
-        raw_page = Nokogiri::HTML(page.doc.to_s)
+      spider.every_html_page do |raw_page|
 
-        crawled_page = CrawlablePages::CrawledPage.new(url=url)
-        crawled_page.title = page.title
+        crawled_page = CrawlablePages::CrawledPage.new(url= raw_page.url.to_s)
+        crawled_page.title = raw_page.title
 
         # searchs for the main components needed in crawlable object
         @crawlable.main_divs.each do |search_for|
-          parsed_page = raw_page.xpath(search_for).text.to_s
+          parsed_page = raw_page.search(search_for).text.to_s
           if parsed_page.length != 0
             crawled_page.page_html += transform_text(parsed_page) + ' '
           end
@@ -53,7 +51,7 @@ class Crawler
 
         # searchs for the scoring components needed in crawlable object
         @crawlable.score_divs.each do |score_name, search_for|
-          parsed_score = raw_page.xpath(search_for).text.to_s.gsub(/[^0-9]/, '')
+          parsed_score = raw_page.search(search_for).text.to_s.gsub(/[^0-9]/, '')
           if parsed_score.length != 0
             crawled_page.page_scores += "[#{score_name}:#{transform_text(parsed_score)}]"
           end
