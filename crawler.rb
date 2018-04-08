@@ -2,8 +2,6 @@
 require 'google/cloud/datastore'
 require 'spidr'
 require 'nokogiri'
-require 'open-uri'
-require 'uri'
 
 =begin
     @param crawlable is the Crawlable object to be crawled
