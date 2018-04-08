@@ -1,7 +1,7 @@
 # Crawl tutorialspoint
 {
   :url => 'https://www.tutorialspoint.com/',
-  :ignored_urls => [
+  :ignore_links => [
     /programming_examples/,/whiteboard/,/netmeeting/,/online_dev_tools/,
     /articlesindex/,/google_tag_manager/,/google_tag_manager/,
     /html_online_training/,/css_online_training/,/3d_animation_online_training/,

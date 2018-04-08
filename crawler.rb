@@ -31,8 +31,9 @@ class Crawler
   end
 
   def start_crawling()
-    Spidr.site(@crawlable.url, ignore_links: @crawlable.ignored_urls,
-      delay: @politeness_policy_gap, limit: @max_crawls) do |spider|
+    Spidr.site(@crawlable.url, delay: @politeness_policy_gap,
+      limit: @max_crawls, ignore_links: @crawlable.ignore_links,
+      links: @crawlable.links) do |spider|
 
       spider.every_url do |url|
 

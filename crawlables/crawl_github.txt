@@ -1,7 +1,7 @@
 # Crawl all GitHub
 {
   :url => 'https://github.com/',
-  :ignored_urls => [
+  :ignore_links => [
     /features/,/business/,/explore/,/marketplace/,/pricing/,/dashboard/,
     /login(.*)/,/join(.*)/,/features(.*)/,/personal(.*)/,/about(.*)/,
     /contact(.*)/,/site(.*)/,/blog(.*)/,/opensearch.xml/,/fluidicon.png/,
