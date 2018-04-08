@@ -4,7 +4,7 @@ require 'spidr'
 
 =begin
     @param crawlable is the Crawlable object to be crawled
-    @param max_crawls the max number of pages to be crawled
+    @param crawls_left the max number of pages to be crawled
 =end
 class Crawler
 
@@ -20,7 +20,7 @@ class Crawler
 
   def initialize(crawlable, limit, is_prod)
     @crawlable = crawlable
-    @max_crawls = limit
+    @crawls_left = limit
     @last_request_time = 0
     @datastore_kind = is_prod ? DATASTORE_KIND_PROD : DATASTORE_KIND_DEV
     @politeness_policy_gap = is_prod ? POLITENESS_POLICY_GAP_PROD : POLITENESS_POLICY_GAP_DEV
@@ -29,7 +29,7 @@ class Crawler
 
   def start_crawling()
     Spidr.site(@crawlable.url, delay: @politeness_policy_gap,
-      limit: @max_crawls, ignore_links: @crawlable.ignore_links,
+      ignore_links: @crawlable.ignore_links,
       links: @crawlable.links) do |spider|
 
       spider.every_html_page do |raw_page|
@@ -57,6 +57,10 @@ class Crawler
         puts crawled_page.url              # DEBUG
         puts crawled_page.title            # DEBUG
         puts crawled_page.page_html        # DEBUG
+
+        return if @crawls_left == 0
+        @crawls_left -= 1
+
       end
     end
   end
