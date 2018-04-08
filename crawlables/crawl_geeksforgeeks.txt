@@ -1,7 +1,7 @@
 # Crawl all Geeksforgeeks
 {
   :url => 'https://www.geeksforgeeks.org',
-  :ignore_links => [/algorithm/,/interview/,/geeksforgeeks.org$/],
+  :links => [/algorithm/,/interview/,/geeksforgeeks.org$/],
   :main_divs => [],
   :score_divs => {}
 }
