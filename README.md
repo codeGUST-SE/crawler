@@ -7,6 +7,7 @@ codeGUST crawler uses spidr to crawl the following websites:
 - Stack Overflow
 - GitHub
 - Tutorials Point
+- GeeksforGeeks
 
 ## Getting started
 
