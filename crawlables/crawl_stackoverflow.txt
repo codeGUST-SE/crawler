@@ -1,7 +1,7 @@
 # Crawl all Stack Overflow
 {
   :url => 'https://stackoverflow.com/questions?sort=votes',
-  :ignored_urls => [
+  :ignore_links => [
     /#/,/q.[1-9].*/,/questions.ask/,/user(.*)/,/.jobs(.*)/,/tags(.*)/,
     /help(.*)/,/tour(.*)/,/.subject=Stack%20Overflow%20Question.*/,
     /company(.*)/,/tagged(.*)/,/.tab(.*)/,/election(.*)/,/opensearch.xml/,
