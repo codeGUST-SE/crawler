@@ -31,8 +31,10 @@ class Crawler
   end
 
   def start_crawling()
-    Spidr.site(@crawlable.url, ignore_links: @crawlable.ignored_urls) do |spider|
-      cnt = 0
+    Spidr.site(@crawlable.url, delay: @politeness_policy_gap,
+      limit: @max_crawls, ignore_links: @crawlable.ignore_links,
+      links: @crawlable.links) do |spider|
+
       spider.every_url do |url|
 
         raw_page = get_page(url)
@@ -67,14 +69,7 @@ class Crawler
 
         puts crawled_page.url              # DEBUG
         puts crawled_page.title            # DEBUG
-        puts crawled_page.page_scores      # DEBUG
-
-        # stop crawling after some number of pages
-        if cnt == @max_crawls - 1
-          return
-        end
-
-        cnt += 1
+        puts crawled_page.page_html        # DEBUG
       end
     end
   end
@@ -82,17 +77,11 @@ class Crawler
   private
 
   # Requests and returns the page given the url.
-  # Waits if needed to comply to the politeness policy.
   # Returns nil if it couldn't retrieve the page.
   def get_page(url)
-    time_passed = Time.now.to_i - @last_request_time
-    if time_passed < @politeness_policy_gap
-      sleep(@politeness_policy_gap - time_passed)
-    end
-
     done = false
     tries = 0
-    while !done and tries < MAX_TRIES
+    while !done and (tries < MAX_TRIES)
       begin
         tries += 1
         raw_page = Nokogiri::HTML(open(url))
@@ -107,8 +96,6 @@ class Crawler
         raw_page = nil
       end
     end
-
-    @last_request_time = Time.now.to_i
     raw_page
   end
 

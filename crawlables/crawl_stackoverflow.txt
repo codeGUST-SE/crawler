@@ -1,8 +1,20 @@
 # Crawl all Stack Overflow
 {
   :url => 'https://stackoverflow.com/questions?sort=votes',
-  :ignored_urls => [/#/,/q.[1-9].*/,/questions.ask/,/user(.*)/,/.jobs(.*)/,/tags(.*)/,/help(.*)/,/tour(.*)/,/.subject=Stack%20Overflow%20Question.*/,/company(.*)/,/tagged(.*)/,/.tab(.*)/,/election(.*)/,/opensearch.xml/,/com.((?!questions)).*/,/(.)lastactivity(.*)/,/edit/,/com(.)(?!.*)/,/(.*)mailto:?(.*)/],
-  :main_divs => ['//*[@id="question-header"]/h1/a','//*[@id="question"]/div[2]/div[2]/div[1]', '//*[@id="question"]/div[2]/div[2]/div[2]', '//*[@class="answer"]/div/div[2]/div[1]', '//*[@class="answer accepted-answer"]/div/div[2]/div[1]'],
+  :ignore_links => [
+    /#/,/q.[1-9].*/,/questions.ask/,/user(.*)/,/.jobs(.*)/,/tags(.*)/,
+    /help(.*)/,/tour(.*)/,/.subject=Stack%20Overflow%20Question.*/,
+    /company(.*)/,/tagged(.*)/,/.tab(.*)/,/election(.*)/,/opensearch.xml/,
+    /com.((?!questions)).*/,/(.)lastactivity(.*)/,/edit/,/com(.)(?!.*)/,
+    /(.*)mailto:?(.*)/
+  ],
+  :main_divs => [
+    '//*[@id="question-header"]/h1/a',
+    '//*[@id="question"]/div[2]/div[2]/div[1]',
+    '//*[@id="question"]/div[2]/div[2]/div[2]',
+    '//*[@class="answer"]/div/div[2]/div[1]',
+    '//*[@class="answer accepted-answer"]/div/div[2]/div[1]'
+  ],
   :score_divs => {
     :votes => '//*[@id="question"]/div[2]/div[1]/div/span',
     :favorites => '//*[@id="question"]/div[2]/div[1]/div/div/b'

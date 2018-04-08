@@ -24,16 +24,18 @@ class CrawlablePages
       hash[:url] = @alt_url
     end
 
-    Crawlable.new(hash[:url], hash[:ignored_urls], hash[:main_divs],
-      hash[:score_divs])
+    Crawlable.new(hash[:url], hash[:links], hash[:ignore_links],
+      hash[:main_divs], hash[:score_divs])
   end
 
   class Crawlable
-    attr_accessor :url, :ignored_urls, :main_divs, :score_divs
+    attr_accessor :url, :links, :ignore_links, :main_divs, :score_divs
 
-    def initialize(url = '', ignored_urls = [], main_divs = [], score_divs = {})
+    def initialize(url = '', links = nil, ignore_links = nil, main_divs = [],
+      score_divs = {})
       @url = url
-      @ignored_urls = ignored_urls
+      @links = links
+      @ignore_links = ignore_links
       @main_divs = main_divs
       @score_divs = score_divs
     end
