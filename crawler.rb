@@ -1,7 +1,6 @@
 # Spidr is the library used to crawl the internet
 require 'google/cloud/datastore'
 require 'spidr'
-require 'nokogiri'
 
 =begin
     @param crawlable is the Crawlable object to be crawled
@@ -34,12 +33,12 @@ class Crawler
       links: @crawlable.links) do |spider|
 
       spider.every_html_page do |raw_page|
-        
-        crawled_page = CrawlablePages::CrawledPage.new(url= raw_page.url.to_s)
-        crawled_page.title = raw_page.title
+        crawled_page =
+          CrawlablePages::CrawledPage.new(raw_page.url.to_s, raw_page.title)
 
         # searchs for the main components needed in crawlable object
-        crawled_page.page_html = transform_text(raw_page.search(*@crawlable.main_divs).text.to_s)
+        crawled_page.page_html =
+          transform_text(raw_page.search(*@crawlable.main_divs).text.to_s)
 
         # skip this page if it does not contain the divs we need
         next if crawled_page.page_html.empty?
