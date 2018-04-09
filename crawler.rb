@@ -54,10 +54,6 @@ class Crawler
         # save to Datastore
         add_to_datastore(crawled_page)
 
-        puts crawled_page.url              # DEBUG
-        puts crawled_page.title            # DEBUG
-        puts crawled_page.page_html        # DEBUG
-
         return if @crawls_left == 0
         @crawls_left -= 1
 
