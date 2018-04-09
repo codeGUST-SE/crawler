@@ -16,12 +16,9 @@ class Crawler
   POLITENESS_POLICY_GAP_DEV = 0
   DATASTORE_KIND_DEV = 'page_dev'
 
-  MAX_TRIES = 3               # max number of tries to retrieve a page
-
   def initialize(crawlable, limit, is_prod)
     @crawlable = crawlable
     @crawls_left = limit
-    @last_request_time = 0
     @datastore_kind = is_prod ? DATASTORE_KIND_PROD : DATASTORE_KIND_DEV
     @politeness_policy_gap = is_prod ? POLITENESS_POLICY_GAP_PROD : POLITENESS_POLICY_GAP_DEV
     @@dataset ||= Google::Cloud::Datastore.new(project_id: 'codegust')
