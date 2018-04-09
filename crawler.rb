@@ -37,11 +37,12 @@ class Crawler
           CrawlablePages::CrawledPage.new(raw_page.url.to_s, raw_page.title)
 
         # searchs for the main components needed in crawlable object
-        crawled_page.page_html =
-          transform_text(raw_page.search(*@crawlable.main_divs).text.to_s)
-
+        parsed_page = raw_page.search(*@crawlable.main_divs)
+        
         # skip this page if it does not contain the divs we need
-        next if crawled_page.page_html.empty?
+        next if parsed_page.empty?
+
+        crawled_page.page_html = transform_text(parsed_page.text.to_s)
 
         # searchs for the scoring components needed in crawlable object
         @crawlable.score_divs.each do |score_name, search_for|
