@@ -1,5 +1,5 @@
 # Spidr is the library used to crawl the internet
-require 'google/cloud/datastore'
+# require 'google/cloud/datastore'
 require 'spidr'
 
 =begin
@@ -21,10 +21,9 @@ class Crawler
   def initialize(crawlable, limit, is_prod)
     @crawlable = crawlable
     @crawls_left = limit
-    @last_request_time = 0
-    @datastore_kind = is_prod ? DATASTORE_KIND_PROD : DATASTORE_KIND_DEV
+    # @datastore_kind = is_prod ? DATASTORE_KIND_PROD : DATASTORE_KIND_DEV
     @politeness_policy_gap = is_prod ? POLITENESS_POLICY_GAP_PROD : POLITENESS_POLICY_GAP_DEV
-    @@dataset ||= Google::Cloud::Datastore.new(project_id: 'codegust')
+    # @@dataset ||= Google::Cloud::Datastore.new(project_id: 'codegust')
   end
 
   def start_crawling()
@@ -38,7 +37,7 @@ class Crawler
 
         # searchs for the main components needed in crawlable object
         parsed_page = raw_page.search(*@crawlable.main_divs)
-        
+
         # skip this page if it does not contain the divs we need
         next if parsed_page.empty?
 
@@ -52,8 +51,11 @@ class Crawler
           end
         end
 
-        # save to Datastore
-        add_to_datastore(crawled_page)
+        # # save to Datastore
+        # add_to_datastore(crawled_page)
+
+        # save to file
+        save_to_file(crawled_page)
 
         return if @crawls_left == 0
         @crawls_left -= 1
@@ -72,18 +74,24 @@ class Crawler
     transformed_page
   end
 
-  def add_to_datastore(crawled_page)
-    entity = Google::Cloud::Datastore::Entity.new
-    entity.key = Google::Cloud::Datastore::Key.new @datastore_kind, crawled_page.url
-    entity['page_url'] = crawled_page.url
-    entity['page_title'] = crawled_page.title
-    entity['page_html'] = crawled_page.page_html
-    entity['page_scores'] = crawled_page.page_scores
-    entity['timestamp'] = Time.now.to_i
-    entity.exclude_from_indexes! 'page_html', true
-    entity.exclude_from_indexes! 'page_title', true
-    entity.exclude_from_indexes! 'page_scores', true
-    @@dataset.save entity
+  def save_to_file(crawled_page)
+    File.open('database.txt', 'a') do |file|
+      file.write("#{crawled_page.url}\t#{crawled_page.title}\t#{crawled_page.page_scores}\t#{crawled_page.page_html}\n")
+    end
   end
+
+  # def add_to_datastore(crawled_page)
+  #   entity = Google::Cloud::Datastore::Entity.new
+  #   entity.key = Google::Cloud::Datastore::Key.new @datastore_kind, crawled_page.url
+  #   entity['page_url'] = crawled_page.url
+  #   entity['page_title'] = crawled_page.title
+  #   entity['page_html'] = crawled_page.page_html
+  #   entity['page_scores'] = crawled_page.page_scores
+  #   entity['timestamp'] = Time.now.to_i
+  #   entity.exclude_from_indexes! 'page_html', true
+  #   entity.exclude_from_indexes! 'page_title', true
+  #   entity.exclude_from_indexes! 'page_scores', true
+  #   @@dataset.save entity
+  # end
 
 end
