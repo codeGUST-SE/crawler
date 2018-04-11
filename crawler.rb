@@ -9,7 +9,7 @@ require 'spidr'
 class Crawler
 
   # PROD constants
-  POLITENESS_POLICY_GAP_PROD = 30
+  POLITENESS_POLICY_GAP_PROD = 0
   DATASTORE_KIND_PROD = 'page'
 
   # DEV constants
@@ -51,7 +51,7 @@ class Crawler
 
         # save to Datastore
         add_to_datastore(crawled_page)
-       
+        puts crawled_page.url
         return if @crawls_left == 0
         @crawls_left -= 1
 

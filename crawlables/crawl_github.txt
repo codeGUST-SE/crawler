@@ -14,7 +14,7 @@
   ],
   :main_divs => [
     '//*[@id="readme"]',
-    'div.file div.blob-wrapper.data.type-ruby'
+    'div.file div.blob-wrapper.data'
   ],
   :score_divs => {
     :stargazers => '//*[@id="js-repo-pjax-container"]/div[1]/div/ul/li[1]/a[2]',
