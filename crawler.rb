@@ -9,7 +9,7 @@ require 'spidr'
 class Crawler
 
   # PROD constants
-  POLITENESS_POLICY_GAP_PROD = 0
+  POLITENESS_POLICY_GAP_PROD = 30
   DATASTORE_KIND_PROD = 'page'
 
   # DEV constants
